@@ -1,0 +1,6 @@
+.git
+.gitignore
+documents
+outputs
+__pycache__
+*.pyc

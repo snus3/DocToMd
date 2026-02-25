@@ -1,0 +1,11 @@
+services:
+  doc-to-md:
+    build:
+      context: .
+    container_name: doc-to-md
+    restart: unless-stopped
+    volumes:
+      - ./documents:/workspace/documents
+      - ./outputs:/workspace/outputs
+      - ./service:/app/service:ro
+    command: ["--mode", "watch", "--interval", "5"]
