@@ -4,3 +4,11 @@ __pycache__/
 
 documents/
 outputs/
+.env
+.env.*
+*.pem
+*.key
+*.p12
+*.pfx
+*.crt
+*.cer

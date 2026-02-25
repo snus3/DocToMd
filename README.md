@@ -41,6 +41,18 @@ Common formats include:
 - Docker
 - Docker Compose (v2, usually included as `docker compose`)
 
+## Clone from GitHub
+
+For other users who want to use this project:
+
+```bash
+git clone https://github.com/snus3/DocToMd.git
+cd DocToMd
+mkdir -p documents outputs
+```
+
+Then place files to convert in `documents/` and run the service.
+
 ## Build and run
 
 ### 1) Start watch mode (continuous service)
@@ -110,3 +122,42 @@ You can combine `--force` with `--select`.
 - Input root: `/workspace/documents`
 - Output root: `/workspace/outputs`
 - Output filenames keep source paths and change extension to `.md`
+
+## GitHub Actions
+
+If you want conversion to run in GitHub Actions, add `.github/workflows/convert-docs.yml`:
+
+```yaml
+name: Convert Documents
+
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - "documents/**"
+      - "service/**"
+      - "Dockerfile"
+      - "docker-compose.yml"
+
+jobs:
+  convert:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Build converter image
+        run: docker compose build
+
+      - name: Convert documents once
+        run: docker compose run --rm doc-to-md --mode once --force
+
+      - name: Upload markdown outputs
+        uses: actions/upload-artifact@v4
+        with:
+          name: converted-markdown
+          path: outputs/
+```
+
+This workflow builds the converter, runs one conversion pass, and uploads the `outputs/` folder as an artifact.
+By default, this repository ignores `documents/` in `.gitignore`, so use `workflow_dispatch` or adjust `.gitignore` if you want push-based runs from committed documents.
